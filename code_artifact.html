@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>國小三年級自然科學冒險王 - 闖關大挑戰</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              green: '#48bb78',
+              yellow: '#ecc94b',
+              sky: '#4299e1',
+              coral: '#f56565',
+              cream: '#fefcbf'
+            }
+          },
+          fontFamily: {
+            sans: ['"Inter"', '"Microsoft JhengHei"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Canvas Confetti for celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes pop {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .animate-pop {
+      animation: pop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    .floating-badge {
+      animation: bounce-slow 3s ease-in-out infinite;
+    }
+    /* Touch smooth scroll and selection prevention for clean game feel */
+    .touch-action-manipulation {
+      touch-action: manipulation;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-b from-sky-100 via-teal-50 to-amber-50 min-h-screen text-slate-800 font-sans flex flex-col justify-between selection:bg-teal-200">
+
+  <!-- Top Header Navigation -->
+  <header class="bg-white/80 backdrop-blur-md sticky top-0 z-40 border-b border-teal-100 shadow-sm px-4 py-3">
+    <div class="max-w-4xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-2 cursor-pointer" onclick="goToHome()">
+        <span class="text-3xl">🌿</span>
+        <div>
+          <h1 class="text-xl md:text-2xl font-black text-teal-700 tracking-wide">自然科學冒險王</h1>
+          <p class="text-xs text-slate-500 font-medium">三年級期中評量專屬趣味挑戰題庫</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-3">
+        <!-- Sound Toggle -->
+        <button id="soundToggle" onclick="toggleSound()" class="p-2 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-full text-lg shadow-sm transition active:scale-95 touch-action-manipulation" title="切換音效">
+          🔊
+        </button>
+        <!-- Home Button -->
+        <button onclick="goToHome()" class="px-3 py-1.5 bg-teal-500 hover:bg-teal-600 text-white rounded-full font-bold text-sm shadow transition active:scale-95 touch-action-manipulation">
+          🏠 回首頁
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-3xl mx-auto w-full px-4 py-6 flex-grow flex flex-col justify-center">
+
+    <!-- SCREEN 1: Home / Mode Select -->
+    <section id="screen-home" class="space-y-6 animate-pop">
+      <!-- Mascot Banner -->
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border-4 border-teal-200 text-center relative overflow-hidden">
+        <div class="absolute -right-8 -top-8 w-32 h-32 bg-yellow-100 rounded-full opacity-60 pointer-events-none"></div>
+        <div class="text-6xl mb-3 floating-badge">🌱🔍</div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-800">歡迎來到自然探索營！</h2>
+        <p class="text-slate-600 mt-2 text-sm sm:text-base leading-relaxed">
+          跟著東東與光光一起探索校園植物、蔬菜美味、力與神奇磁鐵吧！<br class="hidden sm:inline">動動大腦，看看你是不是滿分的「自然探險大師」！
+        </p>
+      </div>
+
+      <!-- Stage Selection Cards -->
+      <h3 class="text-lg font-bold text-teal-800 flex items-center space-x-2">
+        <span>🗺️</span> <span>選擇探險主題（分關挑戰）</span>
+      </h3>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Stage 1 -->
+        <button onclick="startQuiz('theme1')" class="bg-gradient-to-r from-emerald-50 to-teal-100 hover:from-emerald-100 hover:to-teal-200 border-2 border-emerald-300 rounded-2xl p-4 text-left transition transform hover:-translate-y-1 shadow-md active:scale-98 flex items-center space-x-4 touch-action-manipulation">
+          <div class="text-4xl bg-white p-3 rounded-2xl shadow-sm">🌻</div>
+          <div>
+            <h4 class="font-extrabold text-teal-900 text-base sm:text-lg">第一關：校園植物探險隊</h4>
+            <p class="text-xs text-teal-700 mt-0.5">生物非生物、葉脈、葉序、花與果實</p>
+            <span class="inline-block mt-2 text-xs bg-emerald-500 text-white font-bold px-2 py-0.5 rounded-full">共 8 題</span>
+          </div>
+        </button>
+
+        <!-- Stage 2 -->
+        <button onclick="startQuiz('theme2')" class="bg-gradient-to-r from-amber-50 to-yellow-100 hover:from-amber-100 hover:to-yellow-200 border-2 border-amber-300 rounded-2xl p-4 text-left transition transform hover:-translate-y-1 shadow-md active:scale-98 flex items-center space-x-4 touch-action-manipulation">
+          <div class="text-4xl bg-white p-3 rounded-2xl shadow-sm">🥕</div>
+          <div>
+            <h4 class="font-extrabold text-amber-900 text-base sm:text-lg">第二關：植物食材大解密</h4>
+            <p class="text-xs text-amber-700 mt-0.5">軸根鬚根、食用部位、種子多寡與生活</p>
+            <span class="inline-block mt-2 text-xs bg-amber-500 text-white font-bold px-2 py-0.5 rounded-full">共 8 題</span>
+          </div>
+        </button>
+
+        <!-- Stage 3 -->
+        <button onclick="startQuiz('theme3')" class="bg-gradient-to-r from-blue-50 to-sky-100 hover:from-blue-100 hover:to-sky-200 border-2 border-sky-300 rounded-2xl p-4 text-left transition transform hover:-translate-y-1 shadow-md active:scale-98 flex items-center space-x-4 touch-action-manipulation">
+          <div class="text-4xl bg-white p-3 rounded-2xl shadow-sm">⚽</div>
+          <div>
+            <h4 class="font-extrabold text-sky-900 text-base sm:text-lg">第三關：力的神奇魔法</h4>
+            <p class="text-xs text-sky-700 mt-0.5">運動狀態、力的三要素、黏土浮沉實驗</p>
+            <span class="inline-block mt-2 text-xs bg-sky-500 text-white font-bold px-2 py-0.5 rounded-full">共 8 題</span>
+          </div>
+        </button>
+
+        <!-- Stage 4 -->
+        <button onclick="startQuiz('theme4')" class="bg-gradient-to-r from-purple-50 to-indigo-100 hover:from-purple-100 hover:to-indigo-200 border-2 border-indigo-300 rounded-2xl p-4 text-left transition transform hover:-translate-y-1 shadow-md active:scale-98 flex items-center space-x-4 touch-action-manipulation">
+          <div class="text-4xl bg-white p-3 rounded-2xl shadow-sm">🧲</div>
+          <div>
+            <h4 class="font-extrabold text-indigo-900 text-base sm:text-lg">第四關：磁力與生活超能力</h4>
+            <p class="text-xs text-indigo-700 mt-0.5">磁極同斥異吸、非接觸力、水的力量</p>
+            <span class="inline-block mt-2 text-xs bg-indigo-500 text-white font-bold px-2 py-0.5 rounded-full">共 8 題</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Mega Mode (Full Challenge) -->
+      <div class="pt-2">
+        <button onclick="startQuiz('all')" class="w-full bg-gradient-to-r from-red-400 via-pink-500 to-rose-500 hover:opacity-95 text-white font-extrabold text-lg py-4 px-6 rounded-2xl shadow-lg border-2 border-rose-300 flex items-center justify-center space-x-3 transition transform hover:scale-[1.01] active:scale-98 touch-action-manipulation">
+          <span class="text-3xl animate-bounce">🏆</span>
+          <span>挑戰「全能自然大滿貫」（隨機精選 15 題）</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- SCREEN 2: Quiz Play Area -->
+    <section id="screen-quiz" class="hidden space-y-4">
+      <!-- Quiz Header / Status Bar -->
+      <div class="bg-white rounded-2xl p-4 shadow-md border-2 border-teal-100 flex flex-col space-y-2">
+        <div class="flex items-center justify-between text-xs sm:text-sm font-bold text-slate-600">
+          <span id="quiz-badge" class="px-3 py-1 rounded-full bg-teal-100 text-teal-800">關卡名稱</span>
+          <div class="flex items-center space-x-4">
+            <span class="flex items-center text-amber-500 font-extrabold">
+              <span class="text-base mr-1">⭐</span> 得分: <span id="quiz-score" class="ml-1 text-slate-800 text-base">0</span>
+            </span>
+            <span class="text-slate-500">進度: <span id="quiz-question-num" class="text-teal-600 font-extrabold">1</span>/<span id="quiz-total-num">8</span></span>
+          </div>
+        </div>
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+          <div id="quiz-progress-bar" class="bg-gradient-to-r from-teal-400 to-emerald-500 h-full w-0 transition-all duration-300"></div>
+        </div>
+      </div>
+
+      <!-- Question Card -->
+      <div class="bg-white rounded-3xl p-5 sm:p-7 shadow-xl border-4 border-teal-100 space-y-5">
+        <div class="flex items-start space-x-3">
+          <span id="q-number-pill" class="bg-teal-500 text-white font-black text-sm px-2.5 py-1 rounded-xl shadow-sm mt-0.5">Q1</span>
+          <p id="q-text" class="text-base sm:text-xl font-bold text-slate-800 leading-snug">
+            載入題目中...
+          </p>
+        </div>
+
+        <!-- Options Container -->
+        <div id="q-options" class="grid grid-cols-1 gap-3 pt-2">
+          <!-- Filled by JS -->
+        </div>
+
+        <!-- Explanation Card (Initially Hidden) -->
+        <div id="q-explanation-box" class="hidden rounded-2xl p-4 sm:p-5 border-2 text-sm sm:text-base leading-relaxed animate-pop">
+          <div class="flex items-center space-x-2 font-black mb-1">
+            <span id="exp-icon" class="text-xl">💡</span>
+            <span id="exp-title">自然小博士解析</span>
+          </div>
+          <p id="exp-text" class="text-slate-700"></p>
+          <div class="mt-4 flex justify-end">
+            <button id="btn-next" onclick="nextQuestion()" class="bg-teal-600 hover:bg-teal-700 text-white font-extrabold px-6 py-2.5 rounded-xl shadow-md transition active:scale-95 flex items-center space-x-1 touch-action-manipulation">
+              <span>下一題</span>
+              <span>➡️</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SCREEN 3: Result Summary Screen -->
+    <section id="screen-result" class="hidden space-y-6 animate-pop">
+      <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-yellow-200 text-center space-y-4">
+        <div id="result-medal" class="text-7xl floating-badge">🏅</div>
+        <h2 id="result-title" class="text-2xl sm:text-3xl font-black text-slate-800">挑戰完成！太棒了！</h2>
+        <p id="result-subtitle" class="text-slate-600 text-sm sm:text-base font-medium">你獲得了「自然探索大師」的殊榮！</p>
+        
+        <!-- Score Highlights -->
+        <div class="grid grid-cols-2 gap-3 max-w-xs mx-auto py-2">
+          <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3">
+            <span class="text-xs text-emerald-600 font-bold block">答對題數</span>
+            <span id="result-correct-count" class="text-2xl sm:text-3xl font-black text-emerald-700">8/8</span>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3">
+            <span class="text-xs text-amber-600 font-bold block">獲得總分</span>
+            <span id="result-total-score" class="text-2xl sm:text-3xl font-black text-amber-700">100 分</span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <button onclick="goToHome()" class="w-full sm:w-auto px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold rounded-xl transition active:scale-95 touch-action-manipulation">
+            🔄 回主題選單
+          </button>
+          <button id="btn-review-wrong" onclick="toggleWrongReview()" class="w-full sm:w-auto px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl shadow-md transition active:scale-95 touch-action-manipulation">
+            📝 查閱錯題複習本 (<span id="wrong-count-badge">0</span>)
+          </button>
+        </div>
+      </div>
+
+      <!-- Wrong Review Container -->
+      <div id="wrong-review-container" class="hidden bg-white rounded-3xl p-6 shadow-xl border-2 border-rose-200 space-y-4">
+        <div class="flex items-center justify-between border-b border-rose-100 pb-3">
+          <h3 class="font-extrabold text-rose-800 text-lg flex items-center space-x-2">
+            <span>📖</span> <span>重點錯題複習本</span>
+          </h3>
+          <span class="text-xs text-slate-500 font-medium">多看幾次印象更深刻喔！</span>
+        </div>
+        <div id="wrong-list" class="space-y-4">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="py-4 text-center text-xs text-slate-400">
+    國小三年級自然領域學習輔助工具 • 快樂學習 探索科學
+  </footer>
+
+  <!-- Application Logic -->
+  <script>
+    /* ==============================================================
+       1. Question Bank Data (Curated from A/B Exam Papers)
+       ============================================================== */
+    const QUESTION_BANK = [
+      /* THEME 1: 校園植物探險隊 (生物、非生物、葉脈、葉序、花果) */
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '下列哪一組物體皆「沒有」生長或繁殖等生命現象，屬於非生物？',
+        options: ['松鼠、朱槿', '石頭、籃球框', '臺灣欒樹、小鳥', '黑板樹、牽牛花'],
+        ans: 1, // 0-indexed: 石頭、籃球框
+        exp: '石頭和籃球框不會長大、代謝或繁衍後代，屬於非生物；植物與動物皆為生物。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '校園植物主要透過哪一種方式自己獲取養分？',
+        options: ['靠葉片吸收陽光行光合作用', '主動捕捉並消化昆蟲', '吸收空氣中的浮塵顆粒', '只依賴人類澆灌肥料'],
+        ans: 0,
+        exp: '多數植物具有葉綠體，能利用陽光、水和二氧化碳進行光合作用自製養分。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '牽牛花的莖柔軟無法直立，必須纏繞在竹竿上往上攀爬以爭取陽光，這屬於哪一種莖？',
+        options: ['木本莖', '草本莖（攀緣／纏繞）', '膨大的塊莖', '球莖'],
+        ans: 1,
+        exp: '牽牛花木質化程度低，屬於柔軟富韌性的草本藤蔓（草本攀緣／纏繞莖）。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '竹葉與百合葉的葉脈紋路呈現一條條筆直且互不相交的狀態，稱為什麼葉脈？',
+        options: ['網狀脈', '平行脈', '輪生脈', '螺旋脈'],
+        ans: 1,
+        exp: '竹子、玉米、百合等植物的葉脈互相平行直走，屬於典型的「平行脈」。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '桂花樹的每一個莖節上，剛好相對長出「2片」葉子，這種排列方式稱為：',
+        options: ['互生', '輪生', '對生', '叢生'],
+        ans: 2,
+        exp: '同一個莖節長出2片葉子且左右相對生長的葉序稱為「對生」。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '黑板樹的每一個莖節上，圍繞長出「3片或3片以上」的葉子，這種葉序稱為：',
+        options: ['互生', '輪生', '對生', '交錯生'],
+        ans: 1,
+        exp: '同一個節上同時著生3片或以上的葉片圍成一圈，稱為「輪生」。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '花朵在還沒盛開的花苞時期，最外層負責包覆保護花朵內部脆弱構造的是：',
+        options: ['花瓣', '花萼', '雌蕊', '雄蕊'],
+        ans: 1,
+        exp: '「花萼」位於花朵最底部，能在開花前緊密包覆並保護幼嫩的花苞不受傷害。'
+      },
+      {
+        theme: 'theme1',
+        themeName: '第一關：校園植物探險隊',
+        q: '臺灣欒樹的果實輕盈且成熟時膨大成薄膜氣囊，主要是借助大自然的哪種力量來傳播種子？',
+        options: ['磁力', '水力', '風力', '動物搬運'],
+        ans: 2,
+        exp: '欒樹成熟呈粉褐色的果實質地輕如紙片，就像小降落傘能靠「風力」隨風飄飛。'
+      },
+
+      /* THEME 2: 植物食材大解密 (根系型態、食用器官、種子數) */
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '炒青菜常見的「莧菜」有一條粗長的主根垂直深入土壤，這種根系稱為什麼？',
+        options: ['鬚根系', '軸根系', '氣生根', '附著根'],
+        ans: 1,
+        exp: '具有一條明顯粗大的「主根」，旁邊再分生細小側根的根型稱為「軸根系」。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '沙茶魚丁副菜中的「青蔥」，拔起來看底部全是細小如鬍鬚的根，這屬於：',
+        options: ['軸根系', '鬚根系', '木質根', '支持根'],
+        ans: 1,
+        exp: '蔥、蒜、稻米沒有粗大的主根，由莖基部叢生大量細細的根，稱為「鬚根系」。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '午餐喝到的「玉米排骨湯」，我們吃下肚的金黃色玉米粒是植物的哪一個器官？',
+        options: ['莖部', '葉部', '果實與種子', '根部'],
+        ans: 2,
+        exp: '每一顆玉米粒其實都是由花朵受精發育而來的果實（果皮與種皮癒合），也是我們食用的種子部位。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '綠豆粉角甜湯裡的「綠豆」，在植物構造分類上屬於：',
+        options: ['種子', '果實', '葉', '花'],
+        ans: 0,
+        exp: '豆莢是果實，剝開豆莢裡面的綠豆則是能發芽長成新植株的「種子」。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '切開下列哪一種水果時，單一顆果實內通常「只找得到1顆」堅硬的大果核種子？',
+        options: ['芭樂', '龍眼', '西瓜', '火龍果'],
+        ans: 1,
+        exp: '龍眼、荔枝、芒果單顆果實內只有1顆種子；芭樂、西瓜、火龍果則有非常多顆種子。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '火龍果與芭樂切開時，裡面含有大量數不清的細小種子，這點與下列哪種水果最相近？',
+        options: ['小番茄', '龍眼', '櫻桃', '桃子'],
+        ans: 0,
+        exp: '小番茄、芭樂、奇異果與火龍果皆屬於果肉中散佈許多粒小種子的多籽果實。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '棉花可以織成透氣衣物、高大樹木可做成課桌椅，這說明植物在生活中有何用途？',
+        options: ['只能當食物吃', '可做成衣物原料與家具用品', '可直接鑄造成金屬硬幣', '製造塑膠玩具'],
+        ans: 1,
+        exp: '植物提供我們棉麻纖維（做衣服）、堅固木材（做家具房屋）及紙張等眾多生活物資。'
+      },
+      {
+        theme: 'theme2',
+        themeName: '第二關：植物食材大解密',
+        q: '盆栽裡的日日春因為缺水而垂頭喪氣，往盆栽澆水後迅速恢復挺立，主要是靠哪一部位吸水？',
+        options: ['花瓣', '葉片', '根部', '果實'],
+        ans: 2,
+        exp: '植物的「根」是吸收水分與土壤養分最重要的器官，吸收後再經由莖部向上輸送到葉子。'
+      },
+
+      /* THEME 3: 力的神奇魔法 (運動狀態、力的三要素、浮沉實驗) */
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '小東一腳踢歪，原本靜止的足球飛速衝向球門邊的界外，這說明力可以改變物體的：',
+        options: ['顏色與氣味', '運動狀態（方向與速度）', '磁極極性', '化學成分'],
+        ans: 1,
+        exp: '外力能使物體由靜止變為運動、改變移動快慢或轉變運動方向，這些都屬於改變「運動狀態」。'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '物理學上常用「力的三要素」來完整描述一個力，請問下列哪一個「不屬於」力的三要素？',
+        options: ['力的大小', '力的速度', '力的方向', '力的作用點'],
+        ans: 1,
+        exp: '力的三要素是：力的大小、力的方向、力的作用點；「速度」是物體運動的狀態，不是力的要素。'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '用手拉橡皮筋時，若手施加的力量越強，橡皮筋的長度會有什麼變化？',
+        options: ['伸長得越長', '完全沒有任何變化', '縮得比原本更短', '自動變成鐵絲'],
+        ans: 0,
+        exp: '在彈性限度內，外力越大，橡皮筋被拉長伸長的幅度就越明顯。'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '如果拉扯橡皮筋超過了它能承受的彈性極限，最有可能發生什麼危險？',
+        options: ['橡皮筋斷裂', '橡皮筋自動融化', '橡皮筋變得比原本短一半', '橡皮筋開始發光'],
+        ans: 0,
+        exp: '超過材料本身的承受極限時，橡皮筋會失去彈性而直接「斷裂」。'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '把同一塊油黏土揉成實心圓球會沉入水底，但捏成「碗狀凹槽船形」放入水中卻能浮起來，這是因為：',
+        options: ['黏土重量變輕了', '捏成碗狀排開更多的水，獲得更大的向上浮力', '水分子消失了', '黏土變成了保麗龍'],
+        ans: 1,
+        exp: '捏成中空凹槽形狀可以排開更多水，進而獲得足夠支撐物體總重量的「浮力」！'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '承上題，原本能浮在水面上的黏土小船，如果內部不小心進水了，會發生什麼事？',
+        options: ['浮得更高更穩', '總重量增加，會慢慢沉入水底', '小船會自動把水吐出來', '小船會立刻碎成粉末'],
+        ans: 1,
+        exp: '小船進水使「黏土＋水」的總重量增加，當總重大於最大浮力時就會沉入水中。'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '重達幾萬噸由沉重鋼鐵打造的航空母艦能浮在海面上，主要是運用了：',
+        options: ['中空船體設計排開大量海水產生足夠浮力', '海水沒有地心引力', '鋼鐵浸水後質量歸零', '磁鐵排斥作用'],
+        ans: 0,
+        exp: '輪船內部有巨大的中空艙室，排開的海水重量極大，所產生的向上浮力足以支撐萬噸鋼鐵。'
+      },
+      {
+        theme: 'theme3',
+        themeName: '第三關：力的神奇魔法',
+        q: '運動鞋底刻有許多凹凸深刻的紋路，是為了增加哪一種力以防跑步滑倒？',
+        options: ['摩擦力', '磁力', '水柱動力', '浮力'],
+        ans: 0,
+        exp: '凹凸鞋底紋路能增加與地面接觸時的「摩擦力」，提升抓地力、防止打滑摔倒。'
+      },
+
+      /* THEME 4: 磁力與生活超能力 (磁極特性、非接觸力、水傳送動力) */
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '磁鐵在距離鐵製長尾夾1公分處，不必接觸就能把夾子吸過來，這證明磁力是：',
+        options: ['接觸力', '非接觸力（超距力）', '重力作用', '浮力作用'],
+        ans: 1,
+        exp: '不需物體直接相碰就能在一定距離內隔空產生吸引或排斥效果的力，稱為「非接觸力」。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '一根條形磁鐵上，磁力最強、能吸引最多迴紋針的部位是哪裡？',
+        options: ['磁鐵正中間', '兩端的磁極（N極與S極）', '磁鐵的正上方表面', '到處都一樣強'],
+        ans: 1,
+        exp: '磁鐵的兩端稱為「磁極」，是磁力最強的地方；中間部位磁力最弱。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '如果拿一個磁鐵的「N極」靠近另一個磁鐵的「S極」，兩者之間會產生什麼現象？',
+        options: ['相互排斥推開', '相互吸引靠近（異極相吸）', '完全沒有任何作用', '磁鐵當場消磁'],
+        ans: 1,
+        exp: '磁鐵的基本性質是「同極相斥、異極相吸」，不同名極（N與S）會互相緊緊吸引。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '如果拿兩個磁鐵的「N極與N極」互相面對面靠近，手會感覺到兩者：',
+        options: ['互相緊緊吸住', '產生一股推開對方的排斥力（同極相斥）', '完全沒有阻力', '迅速升溫發燙'],
+        ans: 1,
+        exp: '相同名極（N對N 或 S對S）互相靠近時會產生推開對方的排斥力，稱為「同極相斥」。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '一盒鐵製迴紋針掉到沙坑裡跟泥沙混在一起，用哪種工具可以最迅速乾淨地把它們分開？',
+        options: ['放大鏡', '竹筷子', '強力磁鐵', '小塑膠湯匙'],
+        ans: 2,
+        exp: '鐵製品能被磁鐵吸引，而泥沙不會被吸引，利用磁鐵可以隔空迅速吸起所有鐵製迴紋針。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '家裡馬桶水箱內的塑膠浮球浮在水面，當水位上升時帶動連桿關閉進水閥，這是利用了：',
+        options: ['水的浮力', '水的衝擊動力', '磁鐵相吸', '彈簧彈力'],
+        ans: 0,
+        exp: '水對浮球施加向上的「浮力」，藉由水面上升帶動浮球關閉閥門，是生活中常見的浮力應用。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '消防隊員使用強力水柱將火勢撲滅、沖走障礙物，這是利用了哪一種力的原理？',
+        options: ['水傳送動力（衝擊力）', '水的靜止浮力', '空氣磁力', '物體熱脹冷縮'],
+        ans: 0,
+        exp: '流動的高速水流蘊含強大動能，可以「傳送動力」形成強勁衝擊力來滅火或沖刷髒污。'
+      },
+      {
+        theme: 'theme4',
+        themeName: '第四關：磁力與生活超能力',
+        q: '下列哪一種金屬或材質的物品「不能」被磁鐵吸引？',
+        options: ['鐵釘', '鐵製長尾夾', '純鋁箔紙', '鋼製大頭針'],
+        ans: 2,
+        exp: '磁鐵主要吸引鐵、鈷、鎳等鐵磁性金屬；鋁（如鋁箔紙）、銅和木頭無法被磁鐵吸附。'
+      }
+    ];
+
+    /* ==============================================================
+       2. Web Audio Sound Engine (No external sound files required)
+       ============================================================== */
+    let isSoundOn = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function toggleSound() {
+      isSoundOn = !isSoundOn;
+      const btn = document.getElementById('soundToggle');
+      if (isSoundOn) {
+        btn.textContent = '🔊';
+        btn.classList.replace('bg-slate-200', 'bg-amber-100');
+        btn.classList.replace('text-slate-600', 'text-amber-800');
+        playTone(523.25, 0.1, 'sine'); // chime
+      } else {
+        btn.textContent = '🔇';
+        btn.classList.replace('bg-amber-100', 'bg-slate-200');
+        btn.classList.replace('text-amber-800', 'text-slate-600');
+      }
+    }
+
+    function playTone(freq, duration, type = 'sine', gainVal = 0.15) {
+      if (!isSoundOn) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(gainVal, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + duration);
+      } catch (e) {
+        // Audio error handle
+      }
+    }
+
+    function playCorrectSound() {
+      if (!isSoundOn) return;
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+        notes.forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.12, now + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.08 + 0.25);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.08);
+          osc.stop(now + idx * 0.08 + 0.25);
+        });
+      } catch (e) {}
+    }
+
+    function playWrongSound() {
+      if (!isSoundOn) return;
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        [280, 220].forEach((freq, idx) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0.1, now + idx * 0.12);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + idx * 0.12 + 0.2);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now + idx * 0.12);
+          osc.stop(now + idx * 0.12 + 0.2);
+        });
+      } catch (e) {}
+    }
+
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+      }
+    }
+
+    /* ==============================================================
+       3. Game State Management
+       ============================================================== */
+    let currentQuizList = [];
+    let currentIndex = 0;
+    let currentScore = 0;
+    let wrongAnswers = [];
+    let answeredCurrent = false;
+
+    const screenHome = document.getElementById('screen-home');
+    const screenQuiz = document.getElementById('screen-quiz');
+    const screenResult = document.getElementById('screen-result');
+
+    function goToHome() {
+      screenHome.classList.remove('hidden');
+      screenQuiz.classList.add('hidden');
+      screenResult.classList.add('hidden');
+      document.getElementById('wrong-review-container').classList.add('hidden');
+    }
+
+    function startQuiz(mode) {
+      getAudioContext(); // user gesture unlock
+      playTone(440, 0.1, 'sine');
+      answeredCurrent = false;
+      currentIndex = 0;
+      currentScore = 0;
+      wrongAnswers = [];
+
+      if (mode === 'all') {
+        // Shuffle all and pick 15
+        const shuffled = [...QUESTION_BANK].sort(() => 0.5 - Math.random());
+        currentQuizList = shuffled.slice(0, 15);
+        document.getElementById('quiz-badge').textContent = '🏆 全能自然大挑戰';
+      } else {
+        // Filter by theme
+        currentQuizList = QUESTION_BANK.filter(q => q.theme === mode);
+        document.getElementById('quiz-badge').textContent = currentQuizList[0]?.themeName || '關卡挑戰';
+      }
+
+      screenHome.classList.add('hidden');
+      screenResult.classList.add('hidden');
+      screenQuiz.classList.remove('hidden');
+
+      document.getElementById('quiz-score').textContent = '0';
+      document.getElementById('quiz-total-num').textContent = currentQuizList.length;
+
+      loadQuestion(0);
+    }
+
+    function loadQuestion(index) {
+      answeredCurrent = false;
+      const qData = currentQuizList[index];
+
+      // Update Header info
+      document.getElementById('quiz-question-num').textContent = index + 1;
+      document.getElementById('q-number-pill').textContent = `Q${index + 1}`;
+      document.getElementById('q-text').textContent = qData.q;
+
+      // Update progress bar
+      const progressPercent = ((index) / currentQuizList.length) * 100;
+      document.getElementById('quiz-progress-bar').style.width = `${progressPercent}%`;
+
+      // Hide Explanation Box
+      const expBox = document.getElementById('q-explanation-box');
+      expBox.classList.add('hidden');
+
+      // Generate Option Buttons
+      const optsContainer = document.getElementById('q-options');
+      optsContainer.innerHTML = '';
+
+      const optionLabels = ['①', '②', '③', '④'];
+      qData.options.forEach((optText, optIdx) => {
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-3.5 sm:p-4 rounded-2xl border-2 border-slate-200 bg-slate-50 hover:bg-teal-50 hover:border-teal-300 font-semibold text-slate-700 transition flex items-center space-x-3 text-sm sm:text-base active:scale-98 touch-action-manipulation`;
+        btn.id = `opt-btn-${optIdx}`;
+        btn.innerHTML = `
+          <span class="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-xl bg-white border border-slate-300 text-teal-700 font-black text-base shadow-sm">${optionLabels[optIdx]}</span>
+          <span class="flex-grow">${optText}</span>
+          <span id="opt-icon-${optIdx}" class="text-xl opacity-0"></span>
+        `;
+        btn.onclick = () => selectAnswer(optIdx);
+        optsContainer.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(userChoiceIdx) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+
+      const qData = currentQuizList[currentIndex];
+      const isCorrect = (userChoiceIdx === qData.ans);
+      const chosenBtn = document.getElementById(`opt-btn-${userChoiceIdx}`);
+      const correctBtn = document.getElementById(`opt-btn-${qData.ans}`);
+
+      // Disable all option clicks
+      for (let i = 0; i < qData.options.length; i++) {
+        document.getElementById(`opt-btn-${i}`).disabled = true;
+      }
+
+      if (isCorrect) {
+        // Correct Action
+        playCorrectSound();
+        triggerConfetti();
+        currentScore += Math.round(100 / currentQuizList.length);
+        document.getElementById('quiz-score').textContent = currentScore;
+
+        chosenBtn.className = chosenBtn.className.replace('bg-slate-50', 'bg-emerald-100 border-emerald-500 text-emerald-900 shadow-md ring-2 ring-emerald-300');
+        const iconSpan = document.getElementById(`opt-icon-${userChoiceIdx}`);
+        iconSpan.textContent = '🌟 正確！';
+        iconSpan.classList.remove('opacity-0');
+        iconSpan.classList.add('text-emerald-700', 'font-black', 'text-sm');
+
+        showExplanation(true, qData.exp);
+      } else {
+        // Wrong Action
+        playWrongSound();
+        chosenBtn.className = chosenBtn.className.replace('bg-slate-50', 'bg-rose-100 border-rose-400 text-rose-900');
+        const iconWrong = document.getElementById(`opt-icon-${userChoiceIdx}`);
+        iconWrong.textContent = '❌';
+        iconWrong.classList.remove('opacity-0');
+
+        // Highlight correct option
+        correctBtn.className = correctBtn.className.replace('bg-slate-50', 'bg-emerald-50 border-emerald-400 text-emerald-900 ring-2 ring-emerald-200');
+        const iconRight = document.getElementById(`opt-icon-${qData.ans}`);
+        iconRight.textContent = '✅ 正確答案';
+        iconRight.classList.remove('opacity-0');
+        iconRight.classList.add('text-emerald-700', 'font-black', 'text-xs');
+
+        // Record for review book
+        wrongAnswers.push({
+          q: qData.q,
+          options: qData.options,
+          userChoice: qData.options[userChoiceIdx],
+          correctChoice: qData.options[qData.ans],
+          exp: qData.exp
+        });
+
+        showExplanation(false, qData.exp);
+      }
+    }
+
+    function showExplanation(isCorrect, expText) {
+      const expBox = document.getElementById('q-explanation-box');
+      const expIcon = document.getElementById('exp-icon');
+      const expTitle = document.getElementById('exp-title');
+      const expContent = document.getElementById('exp-text');
+      const nextBtn = document.getElementById('btn-next');
+
+      if (isCorrect) {
+        expBox.className = 'rounded-2xl p-4 sm:p-5 border-2 text-sm sm:text-base leading-relaxed bg-emerald-50 border-emerald-300 animate-pop';
+        expIcon.textContent = '🎉';
+        expTitle.textContent = '太棒了！答對囉！';
+        expTitle.className = 'text-emerald-800 font-black';
+      } else {
+        expBox.className = 'rounded-2xl p-4 sm:p-5 border-2 text-sm sm:text-base leading-relaxed bg-amber-50 border-amber-300 animate-pop';
+        expIcon.textContent = '💡';
+        expTitle.textContent = '差一點點！來看看小博士解析：';
+        expTitle.className = 'text-amber-800 font-black';
+      }
+
+      expContent.textContent = expText;
+
+      if (currentIndex === currentQuizList.length - 1) {
+        nextBtn.innerHTML = `<span>看成績結算</span> <span>🏆</span>`;
+      } else {
+        nextBtn.innerHTML = `<span>下一題</span> <span>➡️</span>`;
+      }
+
+      expBox.classList.remove('hidden');
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < currentQuizList.length) {
+        loadQuestion(currentIndex);
+      } else {
+        showResults();
+      }
+    }
+
+    /* ==============================================================
+       4. Result Calculation & Review Notebook
+       ============================================================== */
+    function showResults() {
+      // Complete bar
+      document.getElementById('quiz-progress-bar').style.width = '100%';
+
+      screenQuiz.classList.add('hidden');
+      screenResult.classList.remove('hidden');
+
+      const total = currentQuizList.length;
+      const correct = total - wrongAnswers.length;
+      const finalScore = Math.round((correct / total) * 100);
+
+      document.getElementById('result-correct-count').textContent = `${correct} / ${total}`;
+      document.getElementById('result-total-score').textContent = `${finalScore} 分`;
+      document.getElementById('wrong-count-badge').textContent = wrongAnswers.length;
+
+      const medalElem = document.getElementById('result-medal');
+      const titleElem = document.getElementById('result-title');
+      const subtitleElem = document.getElementById('result-subtitle');
+      const reviewBtn = document.getElementById('btn-review-wrong');
+
+      if (finalScore === 100) {
+        medalElem.textContent = '👑';
+        titleElem.textContent = '完美通關！自然科學特級大師！';
+        subtitleElem.textContent = '哇！全部題目都答對了，觀察力與理解力滿分！';
+        triggerConfetti();
+      } else if (finalScore >= 80) {
+        medalElem.textContent = '🥇';
+        titleElem.textContent = '太厲害了！小小科學探險家！';
+        subtitleElem.textContent = '基礎觀念非常扎實，表現超級棒！';
+      } else if (finalScore >= 60) {
+        medalElem.textContent = '🥈';
+        titleElem.textContent = '順利過關！繼續加油！';
+        subtitleElem.textContent = '已經掌握許多重點，複習錯題後一定能拿100分！';
+      } else {
+        medalElem.textContent = '🌱';
+        titleElem.textContent = '完成挑戰！再接再厲！';
+        subtitleElem.textContent = '別氣餒，點開下方的「錯題複習本」再看一次觀念吧！';
+      }
+
+      if (wrongAnswers.length === 0) {
+        reviewBtn.classList.add('hidden');
+      } else {
+        reviewBtn.classList.remove('hidden');
+        buildWrongReviewList();
+      }
+    }
+
+    function toggleWrongReview() {
+      const reviewContainer = document.getElementById('wrong-review-container');
+      reviewContainer.classList.toggle('hidden');
+      if (!reviewContainer.classList.contains('hidden')) {
+        reviewContainer.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function buildWrongReviewList() {
+      const listContainer = document.getElementById('wrong-list');
+      listContainer.innerHTML = '';
+
+      wrongAnswers.forEach((item, idx) => {
+        const card = document.createElement('div');
+        card.className = 'bg-rose-50/70 border border-rose-200 rounded-2xl p-4 space-y-2 text-sm';
+        card.innerHTML = `
+          <div class="font-bold text-slate-800 flex items-start space-x-2">
+            <span class="bg-rose-500 text-white text-xs px-2 py-0.5 rounded-lg flex-shrink-0 mt-0.5">${idx + 1}</span>
+            <span>${item.q}</span>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+            <div class="p-2 bg-white rounded-xl border border-rose-200 text-rose-700">
+              <span class="font-bold">❌ 你的作答：</span> ${item.userChoice}
+            </div>
+            <div class="p-2 bg-white rounded-xl border border-emerald-200 text-emerald-800">
+              <span class="font-bold">✅ 正確解答：</span> ${item.correctChoice}
+            </div>
+          </div>
+          <div class="text-xs bg-white/90 p-2.5 rounded-xl border border-amber-200 text-slate-700 leading-relaxed">
+            <span class="font-bold text-amber-700">🔍 概念解析：</span> ${item.exp}
+          </div>
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
